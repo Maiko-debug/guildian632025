@@ -12,5 +12,5 @@ class ErrorLogger(commands.Cog):
         else:
             print(f"Unhandled error: {error}")
 
-def setup(bot):
-    bot.add_cog(ErrorLogger(bot))
+async def setup(bot):
+    await bot.add_cog(ErrorLogger(bot))

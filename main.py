@@ -29,6 +29,10 @@ async def global_check(ctx):
 async def on_ready():
     print(f"Logged in as {bot.user}")
     for ext in ["cogs.ping", "cogs.error_logger"]:
-        await bot.load_extension(ext)
+        try:
+            await bot.load_extension(ext)
+            print(f"Loaded {ext}")
+        except Exception as e:
+            print(f"Failed to load {ext}: {e}")
 
 bot.run(TOKEN)
