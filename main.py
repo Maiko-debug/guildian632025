@@ -24,15 +24,29 @@ async def global_check(ctx):
     print(f"Check run: {ctx.author} in guild {ctx.guild.id if ctx.guild else 'DM'}")
     return ctx.guild and (ctx.guild.id == DEV_GUILD_ID or ctx.author.id == OWNER_ID)
 
-# Load cogs
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
+
+    # Load cogs
     for ext in ["cogs.ping", "cogs.error_logger"]:
-        try:
-            await bot.load_extension(ext)
-            print(f"Loaded {ext}")
-        except Exception as e:
-            print(f"Failed to load {ext}: {e}")
+        await bot.load_extension(ext)
+
+    log_channel_id = os.getenv("LOG_CHANNEL_ID")
+    channel = None
+
+    try:
+        if log_channel_id:
+            channel = bot.get_channel(int(log_channel_id))
+
+        if channel:
+            await channel.send(f"✅ **{bot.user.name}** is now online!")
+        else:
+            print(f"[Warning] Log channel not found or bot cannot access it (ID: {log_channel_id})")
+
+    except discord.Forbidden:
+        print("[Error] Bot lacks permission to send messages in the log channel.")
+    except Exception as e:
+        print(f"[Exception] Error sending log message: {e}")
 
 bot.run(TOKEN)
